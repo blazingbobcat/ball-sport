@@ -1,6 +1,6 @@
-#Ball sport alpha v0.2
+#Ball sport beta v0.3
 #by Josh Klipstein
-#November 6, 2018
+#November 27, 2018
 
 #Classes for player parts
 
