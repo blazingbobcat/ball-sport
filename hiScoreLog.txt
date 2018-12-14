@@ -2,7 +2,5 @@
 |BALL SPORT -- HI-SCORE LOG|
  --------------------------
 
-Hi-Scores since first game: 
+The following are all Hi-Scores since first game: 
 0
-130
-160
