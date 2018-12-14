@@ -1,6 +1,6 @@
-#Ball sport beta v0.3
+#Ball sport v1.0
 #by Josh Klipstein
-#November 27, 2018
+#December 14, 2018
 
 #Ball class
 
@@ -37,13 +37,13 @@ class ball(object):
         #Move the ball in a parabolic pattern starting from one player's hand
         #and ending up in the other
         if self.__caught == False:
-            self.__angle += pi / (12 * (self.number))
-            self.__x = self.__x0 + (self.__radius * cos(self.__angle)) - 8
-            self.__y = self.__y0 - (self.__radius * sin(self.__angle)) - 8              
+            self.__angle += pi / (24 * self.number)
+            self.__x = self.__x0 + (self.__radius * cos(self.__angle))
+            self.__y = self.__y0 - (self.__radius * sin(self.__angle))             
         else:
-            self.__angle -= pi / (12 * (self.number))
-            self.__x = self.__x0 + (self.__radius * cos(self.__angle)) - 8
-            self.__y = self.__y0 - (self.__radius * sin(self.__angle)) - 8
+            self.__angle -= pi / (24 * self.number)
+            self.__x = self.__x0 + (self.__radius * cos(self.__angle))
+            self.__y = self.__y0 - (self.__radius * sin(self.__angle))
         
     #Function to set coordinates and angle of ball
     def setCoord(self, x, y, angle):
