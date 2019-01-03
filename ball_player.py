@@ -1,6 +1,6 @@
-#Ball sport v1.0
+#Ball sport v1.1
 #by Josh Klipstein
-#December 14, 2018
+#January 3, 2018
 
 #Classes for player parts
 

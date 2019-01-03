@@ -1,6 +1,6 @@
-#Ball sport v1.0
+#Ball sport v1.1
 #by Josh Klipstein
-#December 14, 2018
+#January 3, 2018
 
 import pygame
 from ball_player import *
@@ -64,6 +64,7 @@ with open("hiScoreLog.txt") as h:
 hiScore = int(hiScoreOld) #Hi-Score variable
 c = 0
 d = 0
+time = 10 #time variable
 
 #Font variables
 font = pygame.font.SysFont('comicsans', 30, True, True)
@@ -97,6 +98,7 @@ whoosh = pygame.mixer.Sound('sounds/Woosh-Mark_DiAngelo-4778593.wav')
 catch = pygame.mixer.Sound('sounds/Ball_Bounce-Popup_Pixels-172648817.wav')
 drop = pygame.mixer.Sound('sounds/Light Bulb Breaking-SoundBible.com-53066515.wav')
 hi = pygame.mixer.Sound('sounds/Ta Da-SoundBible.com-1884170640.wav')
+tieGame = pygame.mixer.Sound('sounds/Sad_Trombone-Joe_Lamb-665429450.wav')
 
 #Function to redraw everything in game window
 def redraw_game_window():
@@ -106,7 +108,10 @@ def redraw_game_window():
     #Scores Text
     scores = [font3.render(str(score), 1, (0,0,0)),\
               font3.render(str(hiScore), 1, (0,0,0)),\
-              font3.render(str(score2), 1, (0,0,0))]
+              font3.render(str(score2), 1, (0,0,0)),\
+                font3.render('{:.2e}'.format(score), 1, (0,0,0)),\
+              font3.render('{:.2e}'.format(hiScore), 1, (0,0,0)),\
+              font3.render('{:.2e}'.format(score2), 1, (0,0,0))]
 
     c = 1
     if play == 0:
@@ -137,13 +142,22 @@ def redraw_game_window():
         for z in balls:
             z.visibility = False #Game is stopped here
 
-    #Render the score text on screen
-    win.blit(onScreen[2], (10, 10))
-    win.blit(scores[0], (onScreen[2].get_width()+10, 10))
-    win.blit(onScreen[3], (win_x // 2 - (onScreen[3].get_width() / 2), 10))
-    win.blit(scores[1], (win_x // 2 + (onScreen[3].get_width() / 2) + 2, 10))
-    win.blit(onScreen[4], (win_x - 50, 10))
-    win.blit(scores[2], (win_x - 28, 10))
+    #Render the score text on screen.  If any score is over 1000, render
+    #all scores using scientific notation
+    if score > 1000 or score2 > 1000:
+        win.blit(onScreen[2], (10, 10))
+        win.blit(scores[3], (onScreen[2].get_width()+10, 10))
+        win.blit(onScreen[3], (win_x // 2 - (onScreen[3].get_width() / 2), 10))
+        win.blit(scores[4], (win_x // 2 + (onScreen[3].get_width() / 2) + 2, 10))
+        win.blit(onScreen[4], (win_x - 100, 10))
+        win.blit(scores[5], (win_x - 77, 10))
+    else:
+        win.blit(onScreen[2], (10, 10))
+        win.blit(scores[0], (onScreen[2].get_width()+10, 10))
+        win.blit(onScreen[3], (win_x // 2 - (onScreen[3].get_width() / 2), 10))
+        win.blit(scores[1], (win_x // 2 + (onScreen[3].get_width() / 2) + 2, 10))
+        win.blit(onScreen[4], (win_x - 50, 10))
+        win.blit(scores[2], (win_x - 28, 10))
 
     #Draw arms
     l_arm.draw(win)
@@ -158,7 +172,7 @@ def redraw_game_window():
         ball.draw(win)
 
     man.draw(win) #Draw our player
-
+        
     #Print "Game Over" if gameOver variable is 1
     if gameOv == 1:
         #Display messages
@@ -210,6 +224,21 @@ def redraw_game_window():
 
 #End function
 
+#Function to reset the hands on arms every time arms move
+def reset_hands(hands):
+    hands[0].x = l_arm.getCoords()[3][0]-16
+    hands[0].y = l_arm.getCoords()[3][1]-32
+    hands[1].x = r_arm.getCoords()[3][0]-16
+    hands[1].y = r_arm.getCoords()[3][1]-32
+
+#End function
+
+#Function to reset balls' visibilities at the beginning of each game
+def reset_balls(balls):
+    balls[0].visibility = True
+    balls[1].visibility = True
+    balls[2].visibility = False
+    
 #Create instance of player
 man = player(win_x // 2 - 32, win_y - 100, 64, 64)
 
@@ -245,8 +274,8 @@ intro.play()
 #main loop
 run = True #Start game running
 while run:
-    #Begin game loop with clock 
-    clock.tick(10)
+    #Begin game loop with clock using time variable 
+    clock.tick(time)
 
     #Check if balls have fallen
     for ball in balls:
@@ -256,8 +285,13 @@ while run:
                 and ball.getCoords()[0] + 12 <= hands[0].x+32:
                     if play == 2 or play == 4:
                         score += 10 #Increase score if ball is caught
+                        #If score is a multiple of 200, increase speed of game
+                        if score % 200 == 0:
+                            time += 1
                     elif play == 6:
                         score2 += 10
+                        if score2 % 200 == 0:
+                            time += 1
                     catch.play() #Play caught sound
                     ball.caughtBall(True) #Change side of ball caught
                     whoosh.play() #Play whoosh sound
@@ -265,8 +299,12 @@ while run:
                 and ball.getCoords()[0] + 12 <= hands[1].x+32:
                     if play == 2 or play == 4:
                         score += 10
+                        if score % 200 == 0:
+                            time += 1
                     elif play == 6:
                         score2 += 10
+                        if score2 % 200 == 0:
+                            time += 1
                     catch.play() 
                     ball.caughtBall(False)
                     whoosh.play()
@@ -317,13 +355,13 @@ while run:
                         else:
                             if hiScore < score:
                                 gameOv = 8 #Scores are equal, but new hi-score
-                                hi.play()
+                                hi.play() #Play hi-score sound effect
                                 hiScore = score
                                 with open("hiScoreLog.txt", mode='a') as h:
                                     h.write(str(hiScore) + '\n')
                             else:
-                                #No hi-score
-                                drop.play()
+                                #No hi-score.  Play the tie game sound effect
+                                tieGame.play()
                                 gameOv = 7
                             
     #Check score to add other ball
@@ -364,6 +402,7 @@ while run:
     if keys[pygame.K_SPACE]:
         #Space gets pressed
         #Start game in 2-player mode for either Player 1 or 2
+        time = 10 #reset time variable
         if play == 1:
             play = 2 #Start Player 1 game when user hits space
 
@@ -375,17 +414,12 @@ while run:
             d = 0
             l_arm = l_arms[c]
             r_arm = r_arms[d]
-            hands[0].x = l_arm.getCoords()[3][0]-16
-            hands[0].y = l_arm.getCoords()[3][1]-32
-            hands[1].x = r_arm.getCoords()[3][0]-16
-            hands[1].y = r_arm.getCoords()[3][1]-32
+            reset_hands(hands)
             
             for b in balls:
                 b.setCoord(man.x + 26, man.y + 36, pi / 2)
                 b.caughtBall(False)
-            ball1.visibility = True
-            ball2.visibility = True
-            ball3.visibility = False
+            reset_balls(balls) #Call function to reset balls' visibilities
 
             whoosh.play()
         elif play == 3:
@@ -394,17 +428,12 @@ while run:
             d = 0
             l_arm = l_arms[c]
             r_arm = r_arms[d]
-            hands[0].x = l_arm.getCoords()[3][0]-16
-            hands[0].y = l_arm.getCoords()[3][1]-32
-            hands[1].x = r_arm.getCoords()[3][0]-16
-            hands[1].y = r_arm.getCoords()[3][1]-32
+            reset_hands(hands)
             
             for b in balls:
                 b.setCoord(man.x + 26, man.y + 36, pi / 2)
                 b.caughtBall(False)
-            ball1.visibility = True
-            ball2.visibility = True
-            ball3.visibility = False
+            reset_balls(balls)
 
             whoosh.play()
 
@@ -414,17 +443,12 @@ while run:
             d = 0
             l_arm = l_arms[c]
             r_arm = r_arms[d]
-            hands[0].x = l_arm.getCoords()[3][0]-16
-            hands[0].y = l_arm.getCoords()[3][1]-32
-            hands[1].x = r_arm.getCoords()[3][0]-16
-            hands[1].y = r_arm.getCoords()[3][1]-32
+            reset_hands(hands)
             
             for b in balls:
                 b.setCoord(man.x + 26, man.y + 36, pi / 2)
                 b.caughtBall(False)
-            ball1.visibility = True
-            ball2.visibility = True
-            ball3.visibility = False
+            reset_balls(balls)
 
             whoosh.play()
             
@@ -432,60 +456,29 @@ while run:
         #Left key gets pressed
         #Extend left arm and contract right arm
         if play == 2 or play == 4 or play == 6:
-            if c < 2 and d > 0:
-                if d == 1:
-                    #Fix right arm if arm outstrecthed
-                    d -= 1
-                    r_arm = r_arms[d]
-                    hands[1].x = r_arm.getCoords()[3][0]-16
-                    hands[1].y = r_arm.getCoords()[3][1]-32
-                else:
-                    #Don't allow snap arm stretches
-                    c+=1
-                    d-=1
-                    l_arm = l_arms[c]
-                    r_arm = r_arms[d]
-                    hands[0].x = l_arm.getCoords()[3][0]-16
-                    hands[0].y = l_arm.getCoords()[3][1]-32
-                    hands[1].x = r_arm.getCoords()[3][0]-16
-                    hands[1].y = r_arm.getCoords()[3][1]-32
-            elif c < 2 and d == 0:
-                c+=1
-                l_arm = l_arms[c]
-                r_arm = r_arms[d]
-                hands[0].x = l_arm.getCoords()[3][0]-16
-                hands[0].y = l_arm.getCoords()[3][1]-32
-                hands[1].x = r_arm.getCoords()[3][0]-16
-                hands[1].y = r_arm.getCoords()[3][1]-32
+            if c < 2:
+                # If left arm not extended, move left arm
+                c += 1
+                l_arm = l_arms[c] # Set new left-arm graphic
+                if d > 0:
+                    # If right arm fully extended, contract right arm
+                    d = 0
+                    r_arm = r_arms[d] # Set new right-arm graphic
+                reset_hands(hands) # Reset hand graphics every time arms move
             
     elif keys[pygame.K_RIGHT]:
         #Right key gets pressed
         #Extend right arm and contract left
         if play == 2 or play == 4 or play == 6:
-            if d < 2 and c > 0:
-                if c == 1:
-                    #Fix left arm if arm outstrecthed
-                    c -= 1
-                    l_arm = l_arms[c]
-                    hands[0].x = l_arm.getCoords()[3][0]-16
-                    hands[0].y = l_arm.getCoords()[3][1]-32
-                else:
-                    d+=1
-                    c-=1
-                    l_arm = l_arms[c]
-                    r_arm = r_arms[d]
-                    hands[0].x = l_arm.getCoords()[3][0]-16
-                    hands[0].y = l_arm.getCoords()[3][1]-32
-                    hands[1].x = r_arm.getCoords()[3][0]-16
-                    hands[1].y = r_arm.getCoords()[3][1]-32
-            elif d < 2 and c == 0:
-                d+=1
-                l_arm = l_arms[c]
-                r_arm = r_arms[d]
-                hands[0].x = l_arm.getCoords()[3][0]-16
-                hands[0].y = l_arm.getCoords()[3][1]-32
-                hands[1].x = r_arm.getCoords()[3][0]-16
-                hands[1].y = r_arm.getCoords()[3][1]-32
+            if d < 2:
+                # If right arm not extended, move right arm
+                d += 1
+                r_arm = r_arms[d] # Set new right-arm graphic
+                if c > 0:
+                    # If left arm fully extended, contract left arm
+                    c = 0
+                    l_arm = l_arms[c] # Set new left-arm graphic
+                reset_hands(hands)
             
     elif keys[pygame.K_ESCAPE]:
         #Escape key quits game.  Flash game over screen if ESC is pressed
