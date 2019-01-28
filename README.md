@@ -1,14 +1,14 @@
 # ball-sport
  Ball sport game 
 
-                                                      Ball Sport Version 1.1
-You are a black-and-white cartoon character juggling 3 balls until you drop one.  The third ball comes after 100 points.  How many points can you rack up before you drop a ball?  Instructions are on the screen before you begin playing.  This is a revision of the original version 1.0.  Some major bugs were resolved, and new features were added.
+                                                      Ball Sport Version 1.1.1
+You are a black-and-white cartoon character juggling 3 balls until you drop one.  The third ball comes after 100 points.  How many points can you rack up before you drop a ball?  Instructions are on the screen before you begin playing.  Version 1.1.1 is a revision of a revision of version 1.0.  There was a minor bug in version 1.1 that showed the wrong game over screen.  Now, I would like to move on to other projects, so I would appreciate it if no more bugs found in the program were brought to my attention.  I don't want to polish this game any more for you people as it would waste my time.  I thank you all for at least trying out my first game in Pygame.
 
                                                             Features
 
 -2-Player Mode!  Compete against a friend!
 -Hi-Score system!  Records all your high scores from the game in a log!
--Realistic sound effects, like you've never heard before!
+-Realistic sound effects!
 -Exciting juggling action just like in real life!
 
 This version made in Python 3.6.3 (64-bit) using pygame version 1.9.  Should be compatible with all OS's.
