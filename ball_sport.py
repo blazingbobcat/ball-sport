@@ -326,7 +326,7 @@ while run:
                         #Player 1's game ends, so move on to player 2
                         play = 5
                         drop.play()
-                    else:
+                    elif play == 6:
                         #Player 2's game ends.  Output appropriate message
                         #depending on which player wins
                         play = 7
